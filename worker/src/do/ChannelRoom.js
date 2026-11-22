@@ -20,16 +20,13 @@ import { wakeForMessage } from '../integrations/instance-bridge/delivery.ts';
 
 const MESSAGE_SIZE_LIMIT = 10 * 1024;
 
-function socketMeta(token, principal, room, meetPeerId = null) {
+function socketMeta(token, principal, room) {
   return {
     token,
     principal,
-    room,
-    meetPeerId
+    room
   };
 }
-
-
 
 function sendSocketError(ws, message, clientMessageId) {
   try {
@@ -113,8 +110,7 @@ export class ChannelRoom {
         userId: auth.session.userId,
         isAdmin: auth.session.isAdmin
       },
-      auth.room,
-      meta.meetPeerId || null
+      auth.room
     );
     this.connections.set(ws, nextMeta);
     ws.serializeAttachment(nextMeta);
@@ -150,25 +146,6 @@ export class ChannelRoom {
         this.connections.delete(socket);
       }
     }));
-  }
-
-    async broadcastMeetPeers() {
-    const peers = [];
-    for (const meta of this.connections.values()) {
-      if (meta?.meetPeerId && meta?.principal?.userId) {
-        peers.push({
-          userId: meta.principal.userId,
-          peerId: meta.meetPeerId
-        });
-      }
-    }
-    await this.broadcast(
-      JSON.stringify({
-        protocolVersion: 1,
-        type: 'meet_peers',
-        peers
-      })
-    );
   }
 
   runMessageProjections(room, message, replyToSenderId = null) {
