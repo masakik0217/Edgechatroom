@@ -20,13 +20,16 @@ import { wakeForMessage } from '../integrations/instance-bridge/delivery.ts';
 
 const MESSAGE_SIZE_LIMIT = 10 * 1024;
 
-function socketMeta(token, principal, room) {
+function socketMeta(token, principal, room, meetPeerId = null) {
   return {
     token,
     principal,
-    room
+    room,
+    meetPeerId
   };
 }
+
+
 
 function sendSocketError(ws, message, clientMessageId) {
   try {
