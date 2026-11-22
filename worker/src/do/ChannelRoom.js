@@ -113,7 +113,8 @@ export class ChannelRoom {
         userId: auth.session.userId,
         isAdmin: auth.session.isAdmin
       },
-      auth.room
+      auth.room,
+      meta.meetPeerId || null
     );
     this.connections.set(ws, nextMeta);
     ws.serializeAttachment(nextMeta);
