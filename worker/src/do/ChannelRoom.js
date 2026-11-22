@@ -152,6 +152,25 @@ export class ChannelRoom {
     }));
   }
 
+    async broadcastMeetPeers() {
+    const peers = [];
+    for (const meta of this.connections.values()) {
+      if (meta?.meetPeerId && meta?.principal?.userId) {
+        peers.push({
+          userId: meta.principal.userId,
+          peerId: meta.meetPeerId
+        });
+      }
+    }
+    await this.broadcast(
+      JSON.stringify({
+        protocolVersion: 1,
+        type: 'meet_peers',
+        peers
+      })
+    );
+  }
+
   runMessageProjections(room, message, replyToSenderId = null) {
     this.state.waitUntil(
       Promise.all([
