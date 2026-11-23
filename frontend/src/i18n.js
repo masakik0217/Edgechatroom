@@ -3,12 +3,14 @@ import { computed, readonly, ref } from 'vue';
 export const SIMPLIFIED_CHINESE_LOCALE = 'zh-CN';
 export const TRADITIONAL_CHINESE_LOCALE = 'zh-TW';
 export const ENGLISH_LOCALE = 'en-US';
+export const JAPANESE_LOCALE = 'ja-JP';
 // 保留旧名称，避免现有调用方把“简体中文”误当成全部中文后产生兼容改动。
 export const CHINESE_LOCALE = SIMPLIFIED_CHINESE_LOCALE;
 export const LOCALE_OPTIONS = Object.freeze([
   { value: SIMPLIFIED_CHINESE_LOCALE, label: '简体中文' },
   { value: TRADITIONAL_CHINESE_LOCALE, label: '繁體中文' },
-  { value: ENGLISH_LOCALE, label: 'English' }
+  { value: ENGLISH_LOCALE, label: 'English' },
+  { value: JAPANESE_LOCALE, label: '日本語' }
 ]);
 
 const STORAGE_KEY = 'edgechat.locale';
@@ -16,7 +18,8 @@ const TRADITIONAL_CHINESE_REGIONS = new Set(['tw', 'hk', 'mo']);
 const localeLoaders = {
   [SIMPLIFIED_CHINESE_LOCALE]: () => import('./locales/zh-CN.js'),
   [TRADITIONAL_CHINESE_LOCALE]: () => import('./locales/zh-TW.js'),
-  [ENGLISH_LOCALE]: () => import('./locales/en-US.js')
+  [ENGLISH_LOCALE]: () => import('./locales/en-US.js'),
+  [JAPANESE_LOCALE]: () => import('./locales/ja-JP.js')
 };
 
 function normalizeLocale(value) {
@@ -25,6 +28,7 @@ function normalizeLocale(value) {
 
 export function detectBrowserLocale(value) {
   const language = String(value || '').replaceAll('_', '-');
+  if (/^ja(?:-|$)/i.test(language)) return JAPANESE_LOCALE;
   if (!/^zh(?:-|$)/i.test(language)) return ENGLISH_LOCALE;
   const subtags = language.toLowerCase().split('-').slice(1);
 
